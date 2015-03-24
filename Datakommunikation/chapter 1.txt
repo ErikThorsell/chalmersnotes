@@ -1,0 +1,181 @@
+1.1.1 - A Nuts and Bolts Description
+ - Hosts = End Systems <=> Web cams, computers, servers, smartphones, etc...
+ - End Systems are connected by a network of communication links and packet 
+   switches (i.e. routers and link-layer switches).
+ - Transmission rate [bits/sec].
+
+1.1.3 - Protocols
+ - A protocol defines the format and the order of messages exchanged between 
+   two or more communicating entities, as well as the actions taken on the 
+   trans- mission and/or receipt of a message or other event.
+
+1.2 - The Network Edge
+ - Hosts divided into clients and servers.
+ - DSL (Digital Subscriber Line) uses different frequencies to send data 
+   and a DSLAM encodes these and routees them to either the phone network 
+   or the Internet. Travels 5-10 miles.
+ - Cable makes use of television companies. Fiber to a node -> coaxial cable.
+ - FTTH (Fiber to the Home)
+ - Dial-Up
+ - Satellite
+
+1.3.1 - Packet switching
+ - Packets are transmitted from a source to a destination. Over each 
+   communication link its rate are equal to the full transmission rate 
+   of the link.
+ - L = bits in package
+ - R = rate [bits/sec]
+ - Time to transmit package = L/R
+ - Store and forward transmission: Packet switch must receive the entire 
+   packet before it can begin to transmit the first bit of the packet onto 
+   the outbound link.
+ - d_{end-to-end} = N*(L/R)    (N links of rate R, there are N-1 routers 
+                                between source and destination)
+ - Forwarding table maps destination addresses to that routers outbound links. 
+   If the router doesn't know the whole address it can look at a part of it 
+   and send the package on the right way. (Example with gas stations.)
+
+1.3.2 - Circuit Switching
+ - The resources needed along a path to provide for communication between the 
+   end systems are reserved!
+ - In packet switching every packet uses resources on demand and may have to 
+   wait.
+ - ANALOGY: Circuit Switching <=> Restaurant w/ reservation.
+            Packet Switching  <=> Restaurant w/o reservation.
+ - Traditional phone networks are circuit-switched networks.
+ - FDM (Frequency division multiplexing) 
+ - TDM (Time division multiplexing)
+ 
+ - Packet Switching > Circuit Switching since it's very unlikely that all 
+   the lines will be occupied at once. (Example: Page 31)
+
+1.3.3 - A Network of Networks
+ Network Structure 1: Interconnects all of the access ISPs with a single global 
+                      transit ISP.
+ Network Structure 2: Consists of hundreds of thousands of ISPs and multiple 
+                      global transit ISPs.
+                      NS2 is a two-tier hierarchy w/ global transit providers 
+                      residing as the top tier and access ISPs as the bottom 
+                      tier.
+                      Access ISP -> Regional ISP -> Tier-1 ISP (a dozen)
+ Network Structure 3: Multi-tier hierarchy i.e. in China. Additional smaller 
+                      ISPs between Access and Tier-1.
+                      To build a network that resembles today's internet we 
+                      must add: Points of Presence (PoP), multi-homing, 
+                      peering and Internet eXchange Points (IXP).
+
+ - PoP: A group of one or more routers and exist in all levelse of the 
+        hierarchy - except for the bottom. Customer ISPs can connect into 
+        the provider ISP.
+ - Multi home: Connect to two or more provider ISPs. I.e. connect w/ tier-1 
+               and regional ISP.
+ - Peer: ISPs connect their networks directly and avoid going upstreams.
+ - IXP: Multiple ISPs can peer together. 300 IXPs in the internet today. 
+
+ Network Structure 4: access ISPs, regional ISPs, tier-1 ISPs, PoPs, 
+                      multi-homing, peering, IXPs
+ Network Structure 5: Describes the internet of 2012. Uses NS4 and adds  
+                      content provider networks. (Google) They have teir 
+                      own network and bypass the upper tiers of the internet 
+                      by peering with lower-tier ISPs either by connecting 
+                      with them or connecting with them via IXPs.
+
+1.4.1 - Overview of Delay in Packet Switched Networks
+ (Nodal) Processing Delay: Time required to examine the packet's header and 
+                           determine where to direct it. Can also include 
+                           time needed to check for bit-level errors.
+                           [Microseconds]
+ Queuing Delay:            [Microseconds to milliseconds]
+ Transmission Delay:       Assuming FIFO.
+                           L = length of packet by bits
+                           R = rate [bits/sec]
+                           Transmission delay = L/R, the amount of time required 
+                           to push all of the packet's bits into the link.
+                           [Microseconds to milliseconds]
+ Propagation Delay:        Time required to propagate from beginning of the link 
+                           to end router. Depends on the physical medium and 
+                           is in the range of 2*10^8 m/s to 3*10^8 m/s.
+                           [Distance/propagation speed]
+ Total Nodal Delay:        Sum of above
+
+ - Example (Page 38)
+
+1.4.2 - Queueing Delay and Packet Loss
+ Queuing Delay:     a = average rate at which packets arrive at queue [packets/sec]
+                    R = Transmission rate
+                    All packets consists of L bits.
+                    - Average rate at which bits arrive at the queue is La bits/sec.
+                    - Assume infinite queue => La/R = Traffic intensity.
+                    - If La/R > 1 the avg rate at which bits arrive at the queue 
+                      exceedes the rate at which it can be transmitted from the 
+                      queue. We have packet loss.
+                    - Applet exampel
+
+1.4.3 - End to End Delay
+ Assume: N-1 routers between source and destination.
+         Uncongested => No Queuedelay
+         Processing delay @ router = d_proc
+         Transmission rate = R bits/sec
+         Propagation on each link is d_prop
+         => d_{end-to-end} = N(d_proc + d_trans + d_prop)
+
+1.5.1 - Layered Architecture
+ Application Layer: Network applications and their application-layer protocol 
+                    resides here.
+                    Distributed over multiple end systems with the application 
+                    in one end system using the protocol to exchange packets 
+                    of information w/ the application in another system.
+                    [Message]
+                    Example: HTTP, SMTP, FTP, DNS
+ Transport Layer:   Transport application-layer messages between application 
+                    end points. The Internet has two: TCP and UDP.
+                    TCP provides a connection-oriented service to its 
+                    applications. Guaranteed delivery of application-layer 
+                    messages and flow control. TCP also breaks long messages 
+                    into shorter segments and provide a congestion-control 
+                    mechanism.
+                    UDP provides a connectionless service. This is a no-frills 
+                    service that provides no reliability, flow-control or 
+                    congestion control.
+                    [Segment]
+ Network Layer:     Moving [datagrams] from one host to another. The TCP or UDP 
+                    passes a transport-layer segment and a destination address 
+                    to the network-layer. The network-layer then provides the 
+                    service of delivering the segment to the transport layer 
+                    of the destination host.
+                    Example: IP, routing protocols.
+Link Layer:         To move a packet from one nod (host or router) to the next 
+                    node in the route the network layer relies on the link layer.
+                    At each node the network layer passes the datagram down to 
+                    the link layer which delivers the datagram to the next 
+                    node along the route. 
+                    Example: Ethernet, WiFi, DOCSIS Protocols. 
+                    [Frames]
+Physical Layer:     Moves the individual bits within the grame from one node 
+                    to the next. Depends on transmission medium.
+
+1.6 - Networks under attack
+ Malware:   Collective name for all malicious stuff.
+ Botnet:    Multiple hosts infected by the same malware used to control them.
+ Virus:     Malware that require so  form of user interaction to infext the 
+            user's device.
+Worms:      Malware that can enter a device without any explicit user 
+            interaction.
+DoS:        Denial of Service
+            - Vulnerability attack: Sending a few, well crafted, messages to 
+              a vulnerable application or operating system running on a targeted 
+              host. 
+            - Bandwidth flooding: The attacker sends a deluge of packets to 
+              to the targeted host. So many that the target's access link 
+              becomes clogged.
+            - Connection flooding: The attacker establishes a large number 
+              of half open or fully open TCP connections at the target host. 
+              The host can become so bogged down with these that is stops 
+              accepting legitimate connections.
+DDos:       Distributed Denial of Service
+            - One attacker uses several slaves to attack a specific victim.
+Pack Sniff: A passive receiver records a copy of every packet send and 
+            received. Is solved by encryption.
+IP Spoof:   Injecting packets into the internet with a false source address.
+            One of many ways to masquerade! Is solved by end point auth.
+
